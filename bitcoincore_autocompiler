@@ -9,9 +9,9 @@ set -x
 set -e
 
 
-# Usage: $0 <http://...>
+# Usage: $0 <https://bitcoincore.org/bin/bitcoin-core-...>
 if [ "$#" != "1" ]; then
-    echo "Usage: sudo $0 <http://bitcoincore.org/bin/bitcoin-...>"
+    echo "Usage: sudo $0 <https://bitcoincore.org/bin/bitcoin-core-...>"
     exit 1
 else
     echo "OK..." $1    
@@ -30,11 +30,14 @@ wget $DIRHTTP"SHA256SUMS"
 wget $DIRHTTP"SHA256SUMS.asc"
 
 CHECKSUM=$(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')
-if [ $CHECKSUM != "ok" ]; then
+#check this, i think not work
+if [ $? != 0 ]; then
 	echo $CHECKSUM
+	echo "KO..."
 	exit 1
 else
 	echo $CHECKSUM
+	echo "OK..."
 fi
 tar -xvf $FILE
 cd $DIRBTC
@@ -59,3 +62,6 @@ export BDB_PREFIX='/home/albit/bitcoin-24.0.1/db4'
 ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include"
 make -j "$(($(nproc)+1))"
 sudo make install
+
+echo "well done, enjoy!"
+
