@@ -1,2 +1,2 @@
-# autocompiler-bitcoin-core
+# bitcoin-core-autocompiler
 Auto compiler bitcoin core
