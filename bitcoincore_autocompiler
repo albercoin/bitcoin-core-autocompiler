@@ -11,27 +11,33 @@ set -e
 
 # Usage: $0 <http://...>
 if [ "$#" != "1" ]; then
-    echo "Usage: sudo $0 <http://...>"
+    echo "Usage: sudo $0 <http://bitcoincore.org/bin/bitcoin-...>"
     exit 1
 else
     echo "OK..." $1    
 fi
 
-FILE=$(echo $1 | awk -F "\/" '{printf tolower($6)}')
-WEB=$(echo $1 | awk -F $FILE '{printf tolower($1"/"$2"/"$3"/"$4"/"$5"/")}')
-DIR=$(echo $FILE | awk -F ".tar" '{printf tolower($1)}')
+#FILE=$(echo $1 | awk -F "\/" '{printf tolower($6)}')
+DIRHTTP=$(echo $1 | awk -F "\/" '{printf tolower($1"/"$2"/"$3"/"$4"/"$5"/")}')
+FILE=$(echo $1 | awk -F "\/" '{printf tolower($5".tar.gz")}' | sed 's/core-//')
+DIRBTC=$(echo $FILE | awk -F ".tar" '{printf tolower($1)}')
 
 echo 
-echo $1
+echo $DIRHTTP$FILE
 echo 
-wget $1 -O $FILE
-wget $WEB"SHA256SUMS"
-wget $WEB"SHA256SUMS.asc"
-if [ $(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}') != "ok" ]; then
+wget $DIRHTTP$FILE -O $FILE
+wget $DIRHTTP"SHA256SUMS"
+wget $DIRHTTP"SHA256SUMS.asc"
+
+CHECKSUM=$(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')
+if [ $CHECKSUM != "ok" ]; then
+	echo $CHECKSUM
 	exit 1
+else
+	echo $CHECKSUM
 fi
 tar -xvf $FILE
-cd $DIR
+cd $DIRBTC
 pwd
 
 sudo apt -y install build-essential libtool autotools-dev automake pkg-config bsdmainutils python3
@@ -53,5 +59,3 @@ export BDB_PREFIX='/home/albit/bitcoin-24.0.1/db4'
 ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include"
 make -j "$(($(nproc)+1))"
 sudo make install
-
-echo "bitcoin core done!!"
