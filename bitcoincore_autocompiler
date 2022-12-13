@@ -10,17 +10,17 @@ set -e
 
 
 # Usage: $0 <https://bitcoincore.org/bin/bitcoin-core-...>
-if [ "$#" != "1" ]; then
-    echo "Usage: sudo $0 <https://bitcoincore.org/bin/bitcoin-core-...>"
-    exit 1
-else
-    echo "OK..." $1    
-fi
+#if [ "$#" != "1" ]; then
+#    echo "Usage: sudo $0 <https://bitcoincore.org/bin/bitcoin-core-...>"
+#    exit 1
+#else
+#    echo "OK..." $1    
+#fi
 
 DIRBITCOINCORE="https://bitcoincore.org/bin/"
 wget $DIRBITCOINCORE -O index
-BITCOINCORELAST=$(grep -o 'bitcoin-core-.*' index | tail -n 1 | awk -F "\/" '{printf ($1)}' )'{printf ($1)}'
-FILE=$(echo BITCOINCORELAST | sed 's/core-//')
+BITCOINCORELAST=$(grep -o 'bitcoin-core-.*' index | tail -n 1 | awk -F "\/" '{printf ($1)}' )
+FILE=$(echo $BITCOINCORELAST | sed 's/core-//')".tar.gz"
 
 #FILE=$(echo $1 | awk -F "\/" '{printf tolower($6)}')
 #DIRHTTP=$(echo $1 | awk -F "\/" '{printf tolower($1"/"$2"/"$3"/"$4"/"$5"/")}')
@@ -28,11 +28,11 @@ FILE=$(echo BITCOINCORELAST | sed 's/core-//')
 DIRBTC=$(echo $FILE | awk -F ".tar" '{printf tolower($1)}')
 
 echo 
-echo $DIRBITCOINCORE$BITCOINCORELAST$FILE
+echo "direcion: " $DIRBITCOINCORE$BITCOINCORELAST"/"$FILE
 echo 
-wget $DIRBITCOINCORE$BITCOINCORELAST$FILE -O $FILE
-wget $DIRBITCOINCORE$BITCOINCORELAST"SHA256SUMS"
-wget $DIRBITCOINCORE$BITCOINCORELAST"SHA256SUMS.asc"
+wget $DIRBITCOINCORE$BITCOINCORELAST"/"$FILE -O $FILE
+wget $DIRBITCOINCORE$BITCOINCORELAST"/""SHA256SUMS"
+wget $DIRBITCOINCORE$BITCOINCORELAST"/""SHA256SUMS.asc"
 
 CHECKSUM=$(sha256sum --ignore-missing --check SHA256SUMS)
 if [ $? -eq 0 ]; then	
