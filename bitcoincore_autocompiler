@@ -37,7 +37,7 @@ wget $DIRBITCOINCORE$BITCOINCORELAST"/""SHA256SUMS.asc"
 
 CHECKSUM=$(sha256sum --ignore-missing --check SHA256SUMS)
 VALORCHECKSUM=$?
-if [ VALORCHECKSUM -eq 0 ]; then	
+if [ $VALORCHECKSUM -eq 0 ]; then	
 	echo "OK..."
 	echo $(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')	
 else
