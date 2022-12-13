@@ -35,13 +35,14 @@ wget $DIRBITCOINCORE$BITCOINCORELAST"/""SHA256SUMS"
 wget $DIRBITCOINCORE$BITCOINCORELAST"/""SHA256SUMS.asc"
 
 CHECKSUM=$(sha256sum --ignore-missing --check SHA256SUMS)
-if [ $? -eq 0 ]; then	
+VALORCHECKSUM=$?
+if [ VALORCHECKSUM -eq 0 ]; then	
 	echo "OK..."
 	echo $(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')	
 else
 	echo "KO..."
 	echo $(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')
-	exit $?
+	exit $VALORCHECKSUM
 fi
 tar -xvf $FILE
 cd $DIRBTC
