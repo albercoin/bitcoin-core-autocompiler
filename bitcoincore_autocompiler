@@ -2,8 +2,9 @@
 
 ###
 ### bitcoin core linux autocompiler
-### run with "sudo"
 ###
+
+sudo -v
 
 set -x
 set -e
