@@ -29,15 +29,14 @@ wget $DIRHTTP$FILE -O $FILE
 wget $DIRHTTP"SHA256SUMS"
 wget $DIRHTTP"SHA256SUMS.asc"
 
-CHECKSUM=$(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')
-#check this, i think not work
-if [ $? != 0 ]; then
-	echo $CHECKSUM
-	echo "KO..."
-	exit 1
-else
-	echo $CHECKSUM
+CHECKSUM=$(sha256sum --ignore-missing --check SHA256SUMS)
+if [ $? -eq 0 ]; then	
 	echo "OK..."
+	echo $(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')	
+else
+	echo "KO..."
+	echo $(sha256sum --ignore-missing --check SHA256SUMS | awk -F ":" '{printf tolower($2)}')
+	exit $?
 fi
 tar -xvf $FILE
 cd $DIRBTC
@@ -58,7 +57,7 @@ sudo apt -y install qtwayland5
 sudo apt -y install libqrencode-dev
 
 ./autogen.sh
-export BDB_PREFIX='/home/albit/bitcoin-24.0.1/db4'
+export BDB_PREFIX=$(pwd)'/db4'
 ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include"
 make -j "$(($(nproc)+1))"
 sudo make install
